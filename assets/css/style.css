@@ -1,0 +1,22 @@
+.panel-body {
+	text-align: center;
+	background: black;
+	color: white;
+	font-family: 'Bungee Shade', cursive;
+}
+
+button {
+	margin: 10px;
+	
+}
+
+#add-character {
+	margin-top: 10px;
+	background: lightblue;
+}
+
+
+img {
+	width: 200px;
+	height: 150px;
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Heroes and Villains</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Bungee|Bungee+Shade" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="gifstyle.css">
+</head>
+<body>
+	<header>
+		<div class="panel panel-default">
+  		<div class="panel-body">
+    	<h1>Heroes and Villains</h1>
+  		</div>
+		</div>
+		
+	</header>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 displaybuttons">
+				buttons go here
+			</div>	
+		</div>	
+		<div class="row">
+			<div class="col-md-3 col-md-offset-9">
+				<form id="character-form">
+					<label for="character-input">Name a character</label>
+					<input type="text" id="character-input" placeholder="...Ironman">
+					<input class="btn btn-default" type="submit" id="add-character" value="Add Character">
+				</form>
+			</div>
+		</div>		
+		<div class="row">
+			<div class="col-md-9">
+				<div class="row display-images">
+
+
+				</div>
+			</div>
+		</div>		
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script type="text/javascript">
+	//	var my_api_key = "hcPTEdeIxgj1yAl46R2v9DwCoab5N6R0";
+		var characters = ["Superman", "Batman", "Wonder Woman", "The Joker", "Thor", "Loki", "Magneto", "Venom", "Spider Man", "Deadpool", "The Hulk", "Captain America"];
+
+		function makeButtons(){
+
+			$(".displaybuttons").empty();
+
+			for(var i = 0; i < characters.length; i++){
+				
+				var a = $("<button>");
+				a.addClass("btn btn-default");
+				a.css("background", "lightblue");
+				a.addClass("character-button");
+				a.attr("data-name", characters[i]);
+				a.text(characters[i]);
+				$(".displaybuttons").append(a);
+			}
+		}
+
+		function displayImages(){
+			$(".display-images").empty();
+			
+			var character = $(this).attr("data-name");
+			var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        character + "&api_key=hcPTEdeIxgj1yAl46R2v9DwCoab5N6R0&limit=10";
+
+        $.ajax({
+        	url: queryURL,
+        	method: "GET"
+        }).done(function(response){
+        	
+        	var results = response.data;
+        	
+        	for(var i = 0; i < results.length; i++){
+        	
+        	var characterDiv = $("<div>");
+        	
+        	characterDiv.addClass("character-gif col-md-4");
+        	
+        	var rated = results[i].rating;
+        	console.log(rated);
+
+        	var pOne = $("<p>").text("Rated: " + rated);
+
+        	characterDiv.append(pOne);
+
+        	var stillUrl = results[i].images.fixed_height_still.url;
+        	console.log(stillUrl);
+
+        	var image = $("<img>").attr("src", stillUrl);
+        	image.addClass("imgGif");
+        	image.attr("data-state", "still");
+        	image.attr("data-still", stillUrl);
+        	
+        	var gifUrl = results[i].images.fixed_height.url;
+        	image.attr("data-animate", gifUrl);
+        	
+        	
+        
+
+        	characterDiv.append(image);
+
+
+        	$(".display-images").append(characterDiv);
+        	
+        	}
+        });
+
+		}
+
+		$(document).on("click", ".imgGif", function(){
+			var state = $(this).attr("data-state");
+
+			if (state === "still"){
+				$(this).attr("src", $(this).attr("data-animate"));
+				$(this).attr("data-state", "animate");
+
+			}else {
+
+				$(this).attr("src", $(this).attr("data-still"));
+        		$(this).attr("data-state", "still");
+			}
+
+
+		});
+
+			
+
+		
+		$("#add-character").on("click", function(e){
+			e.preventDefault();
+
+			var item = $("#character-input").val().trim();
+			characters.push(item);
+
+			makeButtons();
+			$("#character-input").val("");
+		});
+
+
+
+		$(document).on("click", ".character-button", displayImages);
+
+		makeButtons();
+
+		</script>
+</body>
+</html>
